@@ -5,7 +5,7 @@ create table if not exists countries
         primary key,
     name varchar,
     world_region varchar,
-    government varchar,
+    government_type varchar,
     regions_count integer,
     landlocked boolean,
     founding_date date
