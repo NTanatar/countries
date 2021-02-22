@@ -4,7 +4,7 @@ Handles countries and cities.
 A country has the following properties: 
 - name
 - region of the world
-- government
+- government type
 - number of regions
 - landlocked or not
 - founding date
