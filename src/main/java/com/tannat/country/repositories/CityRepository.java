@@ -4,25 +4,15 @@ import com.tannat.country.domain.City;
 
 import java.util.List;
 
-public class CityRepository {
+public interface CityRepository {
 
-    City getById(Long id) {
-        return null;
-    }
+    City getById(Long id);
 
-    List<City> getAll() {
-        return null;
-    }
+    List<City> getAll();
 
-    City add(City c) {
-        return null;
-    }
+    City add(City c);
 
-    City update(City c) {
-        return null;
-    }
+    City update(City c);
 
-    void deleteById(Long id) {
-
-    }
+    void deleteById(Long id);
 }

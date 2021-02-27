@@ -4,25 +4,15 @@ import com.tannat.country.domain.Country;
 
 import java.util.List;
 
-public class CountryRepository {
+public interface CountryRepository {
 
-    Country getById(Long id){
-        return null;
-    }
+    Country getById(Long id);
 
-    List<Country> getAll() {
-        return null;
-    }
+    List<Country> getAll();
 
-    Country add(Country c) {
-        return null;
-    }
+    Country add(Country c);
 
-    Country update(Country c) {
-        return null;
-    }
+    Country update(Country c);
 
-    void deleteById(Long id) {
-
-    }
+    void deleteById(Long id);
 }
