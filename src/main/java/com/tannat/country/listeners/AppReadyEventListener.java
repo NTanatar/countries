@@ -37,14 +37,17 @@ public class AppReadyEventListener {
         city.setCityDay(LocalDate.of(1234, 8, 5));
         city.setPopulation(1_378_689);
 
-        City added = cityRepository.add(city);
+        City added = cityRepository.add(city)
+                .orElseThrow(() -> new RuntimeException("Could not add city"));
         LOGGER.info("+++ Added city: {} ", added);
 
         added.setHasRiver(false);
-        City updated = cityRepository.update(added);
+        City updated = cityRepository.update(added)
+                .orElseThrow(() -> new RuntimeException("Could not update city"));
         LOGGER.info("+++ Updated: {} ", updated);
 
-        City gotById = cityRepository.getById(7L);
+        City gotById = cityRepository.getById(7L)
+                .orElseThrow(() -> new RuntimeException("City not found"));
         LOGGER.info("+++ Got by id = 7: {} ", gotById);
 
         LOGGER.info("+++ Getting all cities:");
@@ -64,14 +67,17 @@ public class AppReadyEventListener {
         co.setGovernmentType("some republic");
         co.setWorldRegion("Europe");
 
-        Country added = countryRepository.add(co);
+        Country added = countryRepository.add(co)
+                .orElseThrow(() -> new RuntimeException("Could not add country"));
         LOGGER.info("+++ Added country: {} ", added);
 
         added.setIsLandlocked(true);
-        Country updated = countryRepository.update(added);
+        Country updated = countryRepository.update(added)
+                .orElseThrow(() -> new RuntimeException("Could not update country"));
         LOGGER.info("+++ Updated: {} ", updated);
 
-        Country gotById = countryRepository.getById(7L);
+        Country gotById = countryRepository.getById(7L)
+                .orElseThrow(() -> new RuntimeException("Country not found") );
         LOGGER.info("+++ Got by id = 7: {} ", gotById);
 
         LOGGER.info("+++ Getting all countries:");

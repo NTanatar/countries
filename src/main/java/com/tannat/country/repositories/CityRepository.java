@@ -3,16 +3,17 @@ package com.tannat.country.repositories;
 import com.tannat.country.domain.City;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CityRepository {
 
-    City getById(Long id);
+    Optional<City> getById(Long id);
 
     List<City> getAll();
 
-    City add(City c);
+    Optional<City> add(City c);
 
-    City update(City c);
+    Optional<City> update(City c);
 
     void deleteById(Long id);
 }
