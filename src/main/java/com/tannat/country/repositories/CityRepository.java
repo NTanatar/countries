@@ -4,6 +4,7 @@ import com.tannat.country.domain.City;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface CityRepository {
 
@@ -16,4 +17,6 @@ public interface CityRepository {
     Optional<City> update(City c);
 
     void deleteById(Long id);
+
+    Set<String> getNamesOfMegaCities();
 }

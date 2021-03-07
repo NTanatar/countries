@@ -10,10 +10,10 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.sql.*;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class CountryRepositoryImpl implements CountryRepository {
     private final RowMapper<Country> mapper;
 
     @Override
-    public Optional<Country>  getById(Long id) {
+    public Optional<Country> getById(Long id) {
         try {
             Country result = jdbcTemplate.queryForObject("select * from countries where id = ?", mapper, id);
             return Optional.ofNullable(result);
@@ -46,7 +46,7 @@ public class CountryRepositoryImpl implements CountryRepository {
     }
 
     @Override
-    public Optional<Country>  update(Country c) {
+    public Optional<Country> update(Country c) {
         jdbcTemplate.update(conn -> createUpdateStatement(conn, c));
         return getById(c.getId());
     }
@@ -56,6 +56,13 @@ public class CountryRepositoryImpl implements CountryRepository {
         jdbcTemplate.update("delete from countries where id = ?", id);
     }
 
+    @Override
+    public Set<String> getNamesOfRepublics() {
+        return getAll().stream()
+                .filter(country -> country.getGovernmentType().toLowerCase(Locale.ROOT).contains("republic"))
+                .map(Country::getName)
+                .collect(Collectors.toSet());
+    }
 
     private PreparedStatement createInsertStatement(Connection conn, Country c) throws SQLException {
         String sql = "insert into countries " +

@@ -54,6 +54,9 @@ public class AppReadyEventListener {
         val all = cityRepository.getAll();
         all.forEach(c -> LOGGER.info(c.toString()));
 
+        LOGGER.info("+++ Names of megacities:");
+        cityRepository.getNamesOfMegaCities().forEach(LOGGER::info);
+
         LOGGER.info("+++ Deleting {}: ", added.getName());
         cityRepository.deleteById(added.getId());
         LOGGER.info("+++ Done");
@@ -83,6 +86,9 @@ public class AppReadyEventListener {
         LOGGER.info("+++ Getting all countries:");
         val all = countryRepository.getAll();
         all.forEach(c -> LOGGER.info(c.toString()));
+
+        LOGGER.info("+++ Names of republics:");
+        countryRepository.getNamesOfRepublics().forEach(LOGGER::info);
 
         LOGGER.info("+++ Deleting {}: ", added.getName());
         countryRepository.deleteById(added.getId());

@@ -14,6 +14,8 @@ import java.sql.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -56,6 +58,13 @@ public class CityRepositoryImpl implements CityRepository {
         jdbcTemplate.update("delete from cities where id = ?", id);
     }
 
+    @Override
+    public Set<String> getNamesOfMegaCities() {
+        return getAll().stream()
+                .filter(city -> city.getPopulation() > 1_000_000)
+                .map(City::getName)
+                .collect(Collectors.toSet());
+    }
 
     private PreparedStatement createInsertStatement(Connection conn, City c) throws SQLException {
         String sql = "insert into cities " +
