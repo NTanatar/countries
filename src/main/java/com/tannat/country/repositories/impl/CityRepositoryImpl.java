@@ -3,6 +3,7 @@ package com.tannat.country.repositories.impl;
 import com.tannat.country.domain.City;
 import com.tannat.country.repositories.CityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -13,6 +14,8 @@ import java.sql.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,8 +26,13 @@ public class CityRepositoryImpl implements CityRepository {
     private final RowMapper<City> mapper;
 
     @Override
-    public City getById(Long id) {
-        return jdbcTemplate.queryForObject("select * from cities where id = ?", mapper, id);
+    public Optional<City> getById(Long id) {
+        try {
+            City result = jdbcTemplate.queryForObject("select * from cities where id = ?", mapper, id);
+            return Optional.ofNullable(result);
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -33,14 +41,14 @@ public class CityRepositoryImpl implements CityRepository {
     }
 
     @Override
-    public City add(City c) {
+    public Optional<City> add(City c) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(conn -> createInsertStatement(conn, c), keyHolder);
         return getById((Long) Objects.requireNonNull(keyHolder.getKeys()).get("id"));
     }
 
     @Override
-    public City update(City c) {
+    public Optional<City> update(City c) {
         jdbcTemplate.update(conn -> createUpdateStatement(conn, c));
         return getById(c.getId());
     }
@@ -50,6 +58,13 @@ public class CityRepositoryImpl implements CityRepository {
         jdbcTemplate.update("delete from cities where id = ?", id);
     }
 
+    @Override
+    public Set<String> getNamesOfMegaCities() {
+        return getAll().stream()
+                .filter(city -> city.getPopulation() > 1_000_000)
+                .map(City::getName)
+                .collect(Collectors.toSet());
+    }
 
     private PreparedStatement createInsertStatement(Connection conn, City c) throws SQLException {
         String sql = "insert into cities " +
