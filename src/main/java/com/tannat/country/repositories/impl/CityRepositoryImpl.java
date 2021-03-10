@@ -41,6 +41,11 @@ public class CityRepositoryImpl implements CityRepository {
     }
 
     @Override
+    public List<City> getByCountryId(Long countryId) {
+        return jdbcTemplate.query("select * from cities where country_id = ?", mapper, countryId);
+    }
+
+    @Override
     public Optional<City> add(City c) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(conn -> createInsertStatement(conn, c), keyHolder);
@@ -56,6 +61,11 @@ public class CityRepositoryImpl implements CityRepository {
     @Override
     public void deleteById(Long id) {
         jdbcTemplate.update("delete from cities where id = ?", id);
+    }
+
+    @Override
+    public void deleteByCountryId(Long id) {
+        jdbcTemplate.update("delete from cities where country_id = ?", id);
     }
 
     @Override

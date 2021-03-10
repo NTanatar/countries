@@ -24,7 +24,7 @@ public class AppReadyEventListener {
     private final CityRepository cityRepository;
 
     @EventListener(ApplicationReadyEvent.class)
-    public void onApplicationReady(){
+    public void onApplicationReady() {
         testCityRepository();
         testCountryRepository();
     }
@@ -80,7 +80,7 @@ public class AppReadyEventListener {
         LOGGER.info("+++ Updated: {} ", updated);
 
         Country gotById = countryRepository.getById(7L)
-                .orElseThrow(() -> new RuntimeException("Country not found") );
+                .orElseThrow(() -> new RuntimeException("Country not found"));
         LOGGER.info("+++ Got by id = 7: {} ", gotById);
 
         LOGGER.info("+++ Getting all countries:");
