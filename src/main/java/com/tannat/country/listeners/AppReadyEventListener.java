@@ -27,6 +27,7 @@ public class AppReadyEventListener {
     public void onApplicationReady() {
         testCityRepository();
         testCountryRepository();
+        testFilterCities();
     }
 
     private void testCityRepository() {
@@ -93,5 +94,30 @@ public class AppReadyEventListener {
         LOGGER.info("+++ Deleting {}: ", added.getName());
         countryRepository.deleteById(added.getId());
         LOGGER.info("+++ Done");
+    }
+
+    private void testFilterCities() {
+        LOGGER.info(">>> AL");
+        cityRepository.getPageFiltered("AL", 0, 10)
+                .forEach(c -> LOGGER.info(c.toString()));
+
+        LOGGER.info(">>> 5");
+        cityRepository.getPageFiltered("5", 0, 10)
+                .forEach(c -> LOGGER.info(c.toString()));
+
+        LOGGER.info(">>> 18");
+        cityRepository.getPageFiltered("18", 0, 10)
+                .forEach(c -> LOGGER.info(c.toString()));
+
+        LOGGER.info(">>> TrU page 0");
+        cityRepository.getPageFiltered("TrU", 0, 2)
+                .forEach(c -> LOGGER.info(c.toString()));
+        LOGGER.info(">>> TrU page 1");
+        cityRepository.getPageFiltered("TrU", 1, 2)
+                .forEach(c -> LOGGER.info(c.toString()));
+        LOGGER.info(">>> TrU page 2");
+        cityRepository.getPageFiltered("TrU", 2, 2)
+                .forEach(c -> LOGGER.info(c.toString()));
+        LOGGER.info(">>> ");
     }
 }

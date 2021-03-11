@@ -46,6 +46,22 @@ public class CityRepositoryImpl implements CityRepository {
     }
 
     @Override
+    public List<City> getPageFiltered(String searchText, Integer pageNumber, Integer pageSize) {
+        String p = "%" + searchText + "%";
+        String sql = "select * from cities where " +
+                " cast(id as text) ILIKE ? or " +
+                " cast(country_id as text) ILIKE ? or " +
+                " name ILIKE ? or " +
+                " cast(founding_date as text) ILIKE ? or " +
+                " cast(city_day as text) ILIKE ? or " +
+                " cast(has_river as text) ILIKE ? or " +
+                " cast(population as text) ILIKE ?" +
+                " order by id limit ? offset ?";
+
+        return jdbcTemplate.query(sql, mapper, p, p, p, p, p, p, p, pageSize, pageNumber * pageSize);
+    }
+
+    @Override
     public Optional<City> add(City c) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(conn -> createInsertStatement(conn, c), keyHolder);

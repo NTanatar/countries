@@ -10,6 +10,8 @@ public interface CityService {
 
     List<CityDto> getAll();
 
+    List<CityDto> getPageFiltered(String searchText, Integer pageNumber, Integer pageSize);
+
     CityDto add(CityDto c);
 
     CityDto update(CityDto c);

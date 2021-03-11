@@ -26,7 +26,7 @@ public class CountryServiceImpl implements CountryService {
     private final CountryRepository countryRepository;
 
     @Override
-    public CountryDto getById(Long id) {
+    public CountryDto getById(@NonNull Long id) {
         return countryRepository.getById(id).map(this::getCitiesAndConvert)
                 .orElseThrow(() -> new ResourceNotFoundException("Country with id " + id + " not found"));
     }
@@ -59,7 +59,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(@NonNull Long id) {
         cityRepository.deleteByCountryId(id);
         countryRepository.deleteById(id);
     }

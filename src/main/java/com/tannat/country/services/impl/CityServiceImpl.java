@@ -21,7 +21,7 @@ public class CityServiceImpl implements CityService {
     private final CityRepository cityRepository;
 
     @Override
-    public CityDto getById(Long id) {
+    public CityDto getById(@NonNull Long id) {
         return cityRepository.getById(id).map(CityDto::new)
                 .orElseThrow(() -> new ResourceNotFoundException("City with id " + id + " not found"));
     }
@@ -29,6 +29,15 @@ public class CityServiceImpl implements CityService {
     @Override
     public List<CityDto> getAll() {
         return cityRepository.getAll().stream().map(CityDto::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CityDto> getPageFiltered(@NonNull String searchText, @NonNull Integer pageNumber, @NonNull Integer pageSize) {
+        if (pageNumber < 0 || pageSize < 0) {
+            throw new ApplicationException("Invalid page parameters");
+        }
+        return cityRepository.getPageFiltered(searchText, pageNumber, pageSize).stream()
+                .map(CityDto::new).collect(Collectors.toList());
     }
 
     @Override
@@ -44,7 +53,7 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(@NonNull Long id) {
         cityRepository.deleteById(id);
     }
 }
