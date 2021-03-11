@@ -44,10 +44,11 @@ class CountryApplicationTests {
         CityDto addedCityB = cityService.add(new CityDto(cityB));
         LOGGER.info("Added city B: " + addedCityB);
 
-        LOGGER.info("With 2 cities: " + countryService.getById(addedCountry.getId()));
+        CountryDto with2cities = countryService.getById(addedCountry.getId());
+        LOGGER.info("With 2 cities: " + with2cities);
 
-        addedCountry.setWorldRegion("Oceania");
-        LOGGER.info("Updated world region: " + countryService.update(addedCountry));
+        with2cities.setWorldRegion("Oceania");
+        LOGGER.info("Updated world region: " + countryService.update(with2cities));
 
         countryService.deleteById(addedCountry.getId());
 

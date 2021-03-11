@@ -1,5 +1,6 @@
 package com.tannat.country.services.impl;
 
+import com.tannat.country.domain.City;
 import com.tannat.country.domain.Country;
 import com.tannat.country.dtos.CityDto;
 import com.tannat.country.dtos.CountryDto;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,21 +43,15 @@ public class CountryServiceImpl implements CountryService {
         Country added = countryRepository.add(CountryDto.toDomain(c))
                 .orElseThrow(() -> new ApplicationException("Failed to add country " + c));
 
-        if (CollectionUtils.isEmpty(c.getCities())) {
-            return new CountryDto(added);
-        }
-        c.getCities().forEach(city -> {
-            city.setCountryId(added.getId());
-            cityRepository.add(CityDto.toDomain(city))
-                    .orElseThrow(() -> new ApplicationException("Failed to add city " + city));
-        });
-        return getCitiesAndConvert(added);
+        return new CountryDto(added, updateCities(c.getCities(), added.getId()));
     }
 
     @Override
     public CountryDto update(@NonNull CountryDto c) {
-        return countryRepository.update(CountryDto.toDomain(c)).map(this::getCitiesAndConvert)
+        Country updated = countryRepository.update(CountryDto.toDomain(c))
                 .orElseThrow(() -> new ApplicationException("Failed to update country " + c));
+
+        return new CountryDto(updated, updateCities(c.getCities(), updated.getId()));
     }
 
     @Override
@@ -66,5 +62,18 @@ public class CountryServiceImpl implements CountryService {
 
     private CountryDto getCitiesAndConvert(Country c) {
         return new CountryDto(c, cityRepository.getByCountryId(c.getId()));
+    }
+
+    private List<City> updateCities(List<CityDto> cities, Long countryId) {
+        cityRepository.deleteByCountryId(countryId);
+
+        if (CollectionUtils.isEmpty(cities)) {
+            return Collections.emptyList();
+        }
+        return cities.stream()
+                .peek(city -> city.setCountryId(countryId))
+                .map(city -> cityRepository.add(CityDto.toDomain(city))
+                        .orElseThrow(() -> new ApplicationException("Failed to add city " + city)))
+                .collect(Collectors.toList());
     }
 }
