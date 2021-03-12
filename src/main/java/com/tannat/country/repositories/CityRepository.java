@@ -12,11 +12,19 @@ public interface CityRepository {
 
     List<City> getAll();
 
+    List<City> getByCountryId(Long countryId);
+
+    List<City> getPage(Integer limit, Integer offset);
+
+    List<City> getPageFiltered(String searchText, Integer limit, Integer offset);
+
     Optional<City> add(City c);
 
     Optional<City> update(City c);
 
     void deleteById(Long id);
+
+    void deleteByCountryId(Long id);
 
     Set<String> getNamesOfMegaCities();
 }

@@ -41,6 +41,32 @@ public class CityRepositoryImpl implements CityRepository {
     }
 
     @Override
+    public List<City> getByCountryId(Long countryId) {
+        return jdbcTemplate.query("select * from cities where country_id = ?", mapper, countryId);
+    }
+
+    @Override
+    public List<City> getPage(Integer limit, Integer offset) {
+        return jdbcTemplate.query("select * from cities order by id limit ? offset ?", mapper, limit, offset);
+    }
+
+    @Override
+    public List<City> getPageFiltered(String searchText, Integer limit, Integer offset) {
+        String p = "%" + searchText + "%";
+        String sql = "select * from cities where " +
+                " cast(id as text) ILIKE ? or " +
+                " cast(country_id as text) ILIKE ? or " +
+                " name ILIKE ? or " +
+                " cast(founding_date as text) ILIKE ? or " +
+                " cast(city_day as text) ILIKE ? or " +
+                " cast(has_river as text) ILIKE ? or " +
+                " cast(population as text) ILIKE ?" +
+                " order by id limit ? offset ?";
+
+        return jdbcTemplate.query(sql, mapper, p, p, p, p, p, p, p, limit, offset);
+    }
+
+    @Override
     public Optional<City> add(City c) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(conn -> createInsertStatement(conn, c), keyHolder);
@@ -56,6 +82,11 @@ public class CityRepositoryImpl implements CityRepository {
     @Override
     public void deleteById(Long id) {
         jdbcTemplate.update("delete from cities where id = ?", id);
+    }
+
+    @Override
+    public void deleteByCountryId(Long id) {
+        jdbcTemplate.update("delete from cities where country_id = ?", id);
     }
 
     @Override
