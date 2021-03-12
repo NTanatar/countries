@@ -7,8 +7,10 @@ import com.tannat.country.repositories.CityRepository;
 import com.tannat.country.services.CityService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,12 +34,21 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public List<CityDto> getPageFiltered(@NonNull String searchText, @NonNull Integer pageNumber, @NonNull Integer pageSize) {
-        if (pageNumber < 0 || pageSize < 0) {
-            throw new ApplicationException("Invalid page parameters");
+    public List<CityDto> getPageFiltered(String searchText, Integer pageNumber, Integer pageSize) {
+        int limit = 0;
+        int offset = 0;
+        if (pageNumber != null && pageSize != null) {
+            if (pageNumber < 0 || pageSize <= 0) {
+                throw new ApplicationException("Invalid page parameters");
+            }
+            limit = pageSize;
+            offset = pageNumber * pageSize;
         }
-        return cityRepository.getPageFiltered(searchText, pageNumber, pageSize).stream()
-                .map(CityDto::new).collect(Collectors.toList());
+
+        val page = StringUtils.hasText(searchText) ? cityRepository.getPageFiltered(searchText, limit, offset)
+                : cityRepository.getPage(limit, offset);
+
+        return page.stream().map(CityDto::new).collect(Collectors.toList());
     }
 
     @Override
@@ -48,12 +59,18 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public CityDto update(@NonNull CityDto c) {
+        checkCityExists(c.getId());
         return cityRepository.update(CityDto.toDomain(c)).map(CityDto::new)
                 .orElseThrow(() -> new ApplicationException("Failed to update city " + c));
     }
 
     @Override
     public void deleteById(@NonNull Long id) {
+        checkCityExists(id);
         cityRepository.deleteById(id);
+    }
+
+    private void checkCityExists(Long id) {
+        getById(id);
     }
 }

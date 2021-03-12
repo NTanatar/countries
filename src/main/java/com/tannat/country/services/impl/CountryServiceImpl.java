@@ -48,6 +48,7 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public CountryDto update(@NonNull CountryDto c) {
+        checkCountryExists(c.getId());
         Country updated = countryRepository.update(CountryDto.toDomain(c))
                 .orElseThrow(() -> new ApplicationException("Failed to update country " + c));
 
@@ -56,6 +57,7 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public void deleteById(@NonNull Long id) {
+        checkCountryExists(id);
         cityRepository.deleteByCountryId(id);
         countryRepository.deleteById(id);
     }
@@ -75,5 +77,10 @@ public class CountryServiceImpl implements CountryService {
                 .map(city -> cityRepository.add(CityDto.toDomain(city))
                         .orElseThrow(() -> new ApplicationException("Failed to add city " + city)))
                 .collect(Collectors.toList());
+    }
+
+    private void checkCountryExists(Long id) {
+        countryRepository.getById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Country with id " + id + " not found"));
     }
 }

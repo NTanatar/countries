@@ -14,7 +14,9 @@ public interface CityRepository {
 
     List<City> getByCountryId(Long countryId);
 
-    List<City> getPageFiltered(String searchText, Integer pageNumber, Integer pageSize);
+    List<City> getPage(Integer limit, Integer offset);
+
+    List<City> getPageFiltered(String searchText, Integer limit, Integer offset);
 
     Optional<City> add(City c);
 

@@ -46,7 +46,12 @@ public class CityRepositoryImpl implements CityRepository {
     }
 
     @Override
-    public List<City> getPageFiltered(String searchText, Integer pageNumber, Integer pageSize) {
+    public List<City> getPage(Integer limit, Integer offset) {
+        return jdbcTemplate.query("select * from cities order by id limit ? offset ?", mapper, limit, offset);
+    }
+
+    @Override
+    public List<City> getPageFiltered(String searchText, Integer limit, Integer offset) {
         String p = "%" + searchText + "%";
         String sql = "select * from cities where " +
                 " cast(id as text) ILIKE ? or " +
@@ -58,7 +63,7 @@ public class CityRepositoryImpl implements CityRepository {
                 " cast(population as text) ILIKE ?" +
                 " order by id limit ? offset ?";
 
-        return jdbcTemplate.query(sql, mapper, p, p, p, p, p, p, p, pageSize, pageNumber * pageSize);
+        return jdbcTemplate.query(sql, mapper, p, p, p, p, p, p, p, limit, offset);
     }
 
     @Override
