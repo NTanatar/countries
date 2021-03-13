@@ -2,10 +2,12 @@ package com.tannat.country.dtos;
 
 import com.tannat.country.domain.City;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 public class CityDto {
     private Long id;
     private Long countryId;

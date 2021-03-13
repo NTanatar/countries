@@ -2,6 +2,7 @@ package com.tannat.country.services.impl;
 
 import com.tannat.country.dtos.CityDto;
 import com.tannat.country.exceptions.ApplicationException;
+import com.tannat.country.exceptions.InvalidParameterException;
 import com.tannat.country.exceptions.ResourceNotFoundException;
 import com.tannat.country.repositories.CityRepository;
 import com.tannat.country.services.CityService;
@@ -39,7 +40,7 @@ public class CityServiceImpl implements CityService {
         int offset = 0;
         if (pageNumber != null && pageSize != null) {
             if (pageNumber < 0 || pageSize <= 0) {
-                throw new ApplicationException("Invalid page parameters");
+                throw new InvalidParameterException("Invalid page parameters");
             }
             limit = pageSize;
             offset = pageNumber * pageSize;
