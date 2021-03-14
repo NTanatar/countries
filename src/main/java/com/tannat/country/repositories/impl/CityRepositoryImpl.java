@@ -2,6 +2,7 @@ package com.tannat.country.repositories.impl;
 
 import com.tannat.country.domain.City;
 import com.tannat.country.repositories.CityRepository;
+import com.tannat.country.services.impl.PageParameters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -46,12 +47,13 @@ public class CityRepositoryImpl implements CityRepository {
     }
 
     @Override
-    public List<City> getPage(Integer limit, Integer offset) {
-        return jdbcTemplate.query("select * from cities order by id limit ? offset ?", mapper, limit, offset);
+    public List<City> getPage(PageParameters pageParameters) {
+        String sql = "select * from cities order by " + pageParameters.getSortBy() + " limit ? offset ?";
+        return jdbcTemplate.query(sql, mapper, pageParameters.getLimit(), pageParameters.getOffset());
     }
 
     @Override
-    public List<City> getPageFiltered(String searchText, Integer limit, Integer offset) {
+    public List<City> getPageFiltered(String searchText, PageParameters pageParameters) {
         String p = "%" + searchText + "%";
         String sql = "select * from cities where " +
                 " cast(id as text) ILIKE ? or " +
@@ -61,9 +63,10 @@ public class CityRepositoryImpl implements CityRepository {
                 " cast(city_day as text) ILIKE ? or " +
                 " cast(has_river as text) ILIKE ? or " +
                 " cast(population as text) ILIKE ?" +
-                " order by id limit ? offset ?";
+                " order by " + pageParameters.getSortBy() + " limit ? offset ?";
 
-        return jdbcTemplate.query(sql, mapper, p, p, p, p, p, p, p, limit, offset);
+        return jdbcTemplate.query(sql, mapper, p, p, p, p, p, p, p,
+                pageParameters.getLimit(), pageParameters.getOffset());
     }
 
     @Override

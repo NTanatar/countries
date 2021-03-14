@@ -1,6 +1,7 @@
 package com.tannat.country.repositories;
 
 import com.tannat.country.domain.Country;
+import com.tannat.country.services.impl.PageParameters;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,8 @@ public interface CountryRepository {
     Optional<Country> getById(Long id);
 
     List<Country> getAll();
+
+    List<Country> getPage(PageParameters pageParameters);
 
     Optional<Country> add(Country c);
 

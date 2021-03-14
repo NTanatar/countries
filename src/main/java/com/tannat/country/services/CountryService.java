@@ -10,6 +10,8 @@ public interface CountryService {
 
     List<CountryDto> getAll();
 
+    List<CountryDto> getPage(Integer pageNumber, Integer pageSize, Integer sortBy);
+
     CountryDto add(CountryDto c);
 
     CountryDto update(CountryDto c);
