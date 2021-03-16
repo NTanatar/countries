@@ -22,8 +22,11 @@ public class CityController {
     }
 
     @GetMapping("/cities")
-    public List<CityDto> getAll() {
-        return cityService.getAll();
+    public List<CityDto> getPage(
+            @RequestParam(required = false) Integer pageNumber,
+            @RequestParam(required = false) Integer pageSize,
+            @RequestParam(required = false) Integer sortBy) {
+        return cityService.getPage(pageNumber, pageSize, sortBy);
     }
 
     @GetMapping("/{countryId}/cities")

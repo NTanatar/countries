@@ -21,8 +21,11 @@ public class CountryController {
     }
 
     @GetMapping
-    public List<CountryDto> getAll() {
-        return countryService.getAll();
+    public List<CountryDto> getPage(
+            @RequestParam(required = false) Integer pageNumber,
+            @RequestParam(required = false) Integer pageSize,
+            @RequestParam(required = false) Integer sortBy) {
+        return countryService.getPage(pageNumber, pageSize, sortBy);
     }
 
     @PostMapping
