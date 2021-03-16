@@ -48,8 +48,10 @@ public class CityRepositoryImpl implements CityRepository {
 
     @Override
     public List<City> getPage(PageParameters pageParameters) {
-        String sql = "select * from cities order by " + pageParameters.getSortBy() + " limit ? offset ?";
-        return jdbcTemplate.query(sql, mapper, pageParameters.getLimit(), pageParameters.getOffset());
+        String sql = "select * from cities order by " + pageParameters.getSortBy()
+                + pageParameters.getLimit() + " offset ?";
+
+        return jdbcTemplate.query(sql, mapper, pageParameters.getOffset());
     }
 
     @Override
@@ -63,10 +65,10 @@ public class CityRepositoryImpl implements CityRepository {
                 " cast(city_day as text) ILIKE ? or " +
                 " cast(has_river as text) ILIKE ? or " +
                 " cast(population as text) ILIKE ?" +
-                " order by " + pageParameters.getSortBy() + " limit ? offset ?";
+                " order by " + pageParameters.getSortBy() +
+                pageParameters.getLimit() + " offset ?";
 
-        return jdbcTemplate.query(sql, mapper, p, p, p, p, p, p, p,
-                pageParameters.getLimit(), pageParameters.getOffset());
+        return jdbcTemplate.query(sql, mapper, p, p, p, p, p, p, p, pageParameters.getOffset());
     }
 
     @Override

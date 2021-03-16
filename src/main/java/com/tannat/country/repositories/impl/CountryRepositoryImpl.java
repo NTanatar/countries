@@ -41,8 +41,10 @@ public class CountryRepositoryImpl implements CountryRepository {
 
     @Override
     public List<Country> getPage(PageParameters pageParameters) {
-        String sql = "select * from countries order by " + pageParameters.getSortBy() + " limit ? offset ?";
-        return jdbcTemplate.query(sql, mapper, pageParameters.getLimit(), pageParameters.getOffset());
+        String sql = "select * from countries order by " + pageParameters.getSortBy()
+                + pageParameters.getLimit() + " offset ?";
+
+        return jdbcTemplate.query(sql, mapper, pageParameters.getOffset());
     }
 
     @Override
