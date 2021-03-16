@@ -39,6 +39,12 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    public List<CountryDto> getPage(Integer pageNumber, Integer pageSize, Integer sortBy) {
+        return countryRepository.getPage(new PageParameters(pageNumber, pageSize, sortBy)).stream()
+                .map(this::getCitiesAndConvert).collect(Collectors.toList());
+    }
+
+    @Override
     public CountryDto add(@NonNull CountryDto c) {
         Country added = countryRepository.add(CountryDto.toDomain(c))
                 .orElseThrow(() -> new ApplicationException("Failed to add country " + c));

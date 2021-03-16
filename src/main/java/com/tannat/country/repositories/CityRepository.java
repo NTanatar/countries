@@ -1,6 +1,7 @@
 package com.tannat.country.repositories;
 
 import com.tannat.country.domain.City;
+import com.tannat.country.services.impl.PageParameters;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,9 +15,9 @@ public interface CityRepository {
 
     List<City> getByCountryId(Long countryId);
 
-    List<City> getPage(Integer limit, Integer offset);
+    List<City> getPage(PageParameters pageParameters);
 
-    List<City> getPageFiltered(String searchText, Integer limit, Integer offset);
+    List<City> getPageFiltered(String searchText, PageParameters pageParameters);
 
     Optional<City> add(City c);
 

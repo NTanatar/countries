@@ -4,6 +4,7 @@ import com.tannat.country.domain.City;
 import com.tannat.country.domain.Country;
 import com.tannat.country.repositories.CityRepository;
 import com.tannat.country.repositories.CountryRepository;
+import com.tannat.country.services.impl.PageParameters;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.slf4j.Logger;
@@ -98,25 +99,25 @@ public class AppReadyEventListener {
 
     private void testFilterCities() {
         LOGGER.info(">>> AL");
-        cityRepository.getPageFiltered("AL", 0, 10)
+        cityRepository.getPageFiltered("AL", new PageParameters(0, 10, null))
                 .forEach(c -> LOGGER.info(c.toString()));
 
         LOGGER.info(">>> 5");
-        cityRepository.getPageFiltered("5", 0, 10)
+        cityRepository.getPageFiltered("5", new PageParameters(0, 10, null))
                 .forEach(c -> LOGGER.info(c.toString()));
 
         LOGGER.info(">>> 18");
-        cityRepository.getPageFiltered("18", 0, 10)
+        cityRepository.getPageFiltered("18", new PageParameters(0, 10, null))
                 .forEach(c -> LOGGER.info(c.toString()));
 
         LOGGER.info(">>> TrU page 0");
-        cityRepository.getPageFiltered("TrU", 0, 2)
+        cityRepository.getPageFiltered("TrU", new PageParameters(0, 2, null))
                 .forEach(c -> LOGGER.info(c.toString()));
         LOGGER.info(">>> TrU page 1");
-        cityRepository.getPageFiltered("TrU", 1, 2)
+        cityRepository.getPageFiltered("TrU", new PageParameters(1, 2, null))
                 .forEach(c -> LOGGER.info(c.toString()));
         LOGGER.info(">>> TrU page 2");
-        cityRepository.getPageFiltered("TrU", 2, 2)
+        cityRepository.getPageFiltered("TrU", new PageParameters(2, 2, null))
                 .forEach(c -> LOGGER.info(c.toString()));
         LOGGER.info(">>> ");
     }

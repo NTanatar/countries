@@ -3,6 +3,7 @@ package com.tannat.country.dtos;
 import com.tannat.country.domain.City;
 import com.tannat.country.domain.Country;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@NoArgsConstructor
 public class CountryDto {
     private Long id;
     private String name;

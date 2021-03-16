@@ -2,6 +2,7 @@ package com.tannat.country.repositories.impl;
 
 import com.tannat.country.domain.Country;
 import com.tannat.country.repositories.CountryRepository;
+import com.tannat.country.services.impl.PageParameters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,6 +37,14 @@ public class CountryRepositoryImpl implements CountryRepository {
     @Override
     public List<Country> getAll() {
         return jdbcTemplate.query("select * from countries", mapper);
+    }
+
+    @Override
+    public List<Country> getPage(PageParameters pageParameters) {
+        String sql = "select * from countries order by " + pageParameters.getSortBy()
+                + pageParameters.getLimit() + " offset ?";
+
+        return jdbcTemplate.query(sql, mapper, pageParameters.getOffset());
     }
 
     @Override
