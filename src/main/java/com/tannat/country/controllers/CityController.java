@@ -10,38 +10,49 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/cities")
+@RequestMapping("/v1/countries")
 @RequiredArgsConstructor
 public class CityController {
 
     private final CityService cityService;
 
-    @GetMapping("/{id}")
-    public CityDto get(@PathVariable Long id) {
+    @GetMapping("/cities/{id}")
+    public CityDto getById(@PathVariable Long id) {
         return cityService.getById(id);
     }
 
-    @GetMapping
+    @GetMapping("/cities")
     public List<CityDto> getAll() {
         return cityService.getAll();
     }
 
-    @PostMapping
+    @GetMapping("/{countryId}/cities")
+    public List<CityDto> getByCountry(@PathVariable Long countryId) {
+        return cityService.getByCountryId(countryId);
+    }
+
+    @PostMapping("/{countryId}/cities")
     @ResponseStatus(HttpStatus.CREATED)
-    public CityDto add(@RequestBody CityDto city) {
+    public CityDto add(
+            @PathVariable Long countryId,
+            @RequestBody CityDto city) {
+        city.setCountryId(countryId);
         return cityService.add(city);
     }
 
-    @PutMapping("/{id}")
-    public CityDto update(@PathVariable Long id,
-                          @RequestBody CityDto city) {
+    @PutMapping("/{countryId}/cities/{id}")
+    public CityDto update(
+            @PathVariable Long countryId,
+            @PathVariable Long id,
+            @RequestBody CityDto city) {
+        city.setCountryId(countryId);
         city.setId(id);
         return cityService.update(city);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/cities/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void deleteById(@PathVariable Long id) {
         cityService.deleteById(id);
     }
 }

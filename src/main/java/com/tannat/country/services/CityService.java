@@ -10,6 +10,8 @@ public interface CityService {
 
     List<CityDto> getAll();
 
+    List<CityDto> getByCountryId(Long countryId);
+
     List<CityDto> getPage(Integer pageNumber, Integer pageSize, Integer sortBy);
 
     List<CityDto> getPageFiltered(String searchText, Integer pageNumber, Integer pageSize, Integer sortBy);

@@ -34,6 +34,11 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
+    public List<CityDto> getByCountryId(Long countryId) {
+        return cityRepository.getByCountryId(countryId).stream().map(CityDto::new).collect(Collectors.toList());
+    }
+
+    @Override
     public List<CityDto> getPage(Integer pageNumber, Integer pageSize, Integer sortBy) {
         return getPageFiltered(null, pageNumber, pageSize, sortBy);
     }
