@@ -28,10 +28,10 @@ class CityServiceImplTest {
     @InjectMocks
     private CityServiceImpl cityService;
 
-    private final City cityA = City.builder().id(1L).name("A").population(456).build();
-    private final City cityB = City.builder().id(2L).name("B").population(11).build();
-    private final City createdCity = City.builder().id(22L).name("CreatedCity").build();
-    private final City updatedCity = City.builder().id(23L).name("UpdatedCity").build();
+    private final City CITY_A = City.builder().id(1L).name("A").population(456).build();
+    private final City CITY_B = City.builder().id(2L).name("B").population(11).build();
+    private final City CREATED = City.builder().id(22L).name("CreatedCity").build();
+    private final City UPDATED = City.builder().id(23L).name("UpdatedCity").build();
 
     @BeforeEach
     void setUp() {
@@ -41,11 +41,11 @@ class CityServiceImplTest {
     @Test
     void getById_existing() {
         Long existingId = 1L;
-        when(cityRepository.getById(existingId)).thenReturn(Optional.of(cityA));
+        when(cityRepository.getById(existingId)).thenReturn(Optional.of(CITY_A));
 
         CityDto result = cityService.getById(existingId);
 
-        assertEquals(new CityDto(cityA), result);
+        assertEquals(new CityDto(CITY_A), result);
         verify(cityRepository).getById(existingId);
     }
 
@@ -62,55 +62,55 @@ class CityServiceImplTest {
 
     @Test
     void getAll() {
-        when(cityRepository.getAll()).thenReturn(Arrays.asList(cityA, cityB));
+        when(cityRepository.getAll()).thenReturn(Arrays.asList(CITY_A, CITY_B));
 
         List<CityDto> result = cityService.getAll();
 
-        assertEquals(Arrays.asList(new CityDto(cityA), new CityDto(cityB)), result);
+        assertEquals(Arrays.asList(new CityDto(CITY_A), new CityDto(CITY_B)), result);
         verify(cityRepository).getAll();
     }
 
     @Test
     void getByCountryId() {
         Long countryId = 8L;
-        when(cityRepository.getByCountryId(countryId)).thenReturn(Arrays.asList(cityA, cityB));
+        when(cityRepository.getByCountryId(countryId)).thenReturn(Arrays.asList(CITY_A, CITY_B));
 
         List<CityDto> result = cityService.getByCountryId(countryId);
 
-        assertEquals(Arrays.asList(new CityDto(cityA), new CityDto(cityB)), result);
+        assertEquals(Arrays.asList(new CityDto(CITY_A), new CityDto(CITY_B)), result);
         verify(cityRepository).getByCountryId(countryId);
     }
 
     @Test
     void getPage() {
         when(cityRepository.getPage(new PageParameters(1, 2, 3)))
-                .thenReturn(Collections.singletonList(cityB));
+                .thenReturn(Collections.singletonList(CITY_B));
 
         List<CityDto> result = cityService.getPage(1, 2, 3);
 
-        assertEquals(Collections.singletonList(new CityDto(cityB)), result);
+        assertEquals(Collections.singletonList(new CityDto(CITY_B)), result);
         verify(cityRepository).getPage(new PageParameters(1, 2, 3));
     }
 
     @Test
     void getPageFiltered() {
         when(cityRepository.getPageFiltered("A", new PageParameters(0, 2, 3)))
-                .thenReturn(Collections.singletonList(cityA));
+                .thenReturn(Collections.singletonList(CITY_A));
 
         List<CityDto> result = cityService.getPageFiltered("A", 0, 2, 3);
 
-        assertEquals(Collections.singletonList(new CityDto(cityA)), result);
+        assertEquals(Collections.singletonList(new CityDto(CITY_A)), result);
         verify(cityRepository).getPageFiltered("A", new PageParameters(0, 2, 3));
     }
 
     @Test
     void add() {
         City input = City.builder().name("Town").build();
-        when(cityRepository.add(input)).thenReturn(Optional.of(createdCity));
+        when(cityRepository.add(input)).thenReturn(Optional.of(CREATED));
 
         CityDto result = cityService.add(new CityDto(input));
 
-        assertEquals(new CityDto(createdCity), result);
+        assertEquals(new CityDto(CREATED), result);
         verify(cityRepository).add(input);
     }
 
@@ -118,12 +118,12 @@ class CityServiceImplTest {
     void update_existing() {
         Long existingId = 1L;
         City input = City.builder().name("Dorf").id(existingId).build();
-        when(cityRepository.getById(existingId)).thenReturn(Optional.of(cityA));
-        when(cityRepository.update(input)).thenReturn(Optional.of(updatedCity));
+        when(cityRepository.getById(existingId)).thenReturn(Optional.of(CITY_A));
+        when(cityRepository.update(input)).thenReturn(Optional.of(UPDATED));
 
         CityDto result = cityService.update(new CityDto(input));
 
-        assertEquals(new CityDto(updatedCity), result);
+        assertEquals(new CityDto(UPDATED), result);
         verify(cityRepository).getById(existingId);
         verify(cityRepository).update(input);
     }
@@ -144,7 +144,7 @@ class CityServiceImplTest {
     @Test
     void deleteById_existing() {
         Long existingId = 1L;
-        when(cityRepository.getById(existingId)).thenReturn(Optional.of(cityA));
+        when(cityRepository.getById(existingId)).thenReturn(Optional.of(CITY_A));
 
         cityService.deleteById(existingId);
 
