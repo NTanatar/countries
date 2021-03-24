@@ -1,17 +1,15 @@
 package com.tannat.country.services.impl;
 
-import com.tannat.country.domain.City;
 import com.tannat.country.dtos.CityDto;
-import com.tannat.country.exceptions.ApplicationException;
 import com.tannat.country.exceptions.ResourceNotFoundException;
-import com.tannat.country.repositories.CityRepository;
+import com.tannat.country.repositories.JpaCityRepository;
 import com.tannat.country.services.CityService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,22 +18,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CityServiceImpl implements CityService {
 
-    private final CityRepository cityRepository;
+    private final JpaCityRepository cityRepository;
 
     @Override
     public CityDto getById(@NonNull Long id) {
-        return cityRepository.getById(id).map(CityDto::new)
+        return cityRepository.findById(id).map(CityDto::new)
                 .orElseThrow(() -> new ResourceNotFoundException("City with id " + id + " not found"));
     }
 
     @Override
     public List<CityDto> getAll() {
-        return cityRepository.getAll().stream().map(CityDto::new).collect(Collectors.toList());
+        return cityRepository.findAll().stream().map(CityDto::new).collect(Collectors.toList());
     }
 
     @Override
     public List<CityDto> getByCountryId(Long countryId) {
-        return cityRepository.getByCountryId(countryId).stream().map(CityDto::new).collect(Collectors.toList());
+        return cityRepository.getAllByCountryId(countryId).stream().map(CityDto::new).collect(Collectors.toList());
     }
 
     @Override
@@ -45,28 +43,27 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public List<CityDto> getPageFiltered(String searchText, Integer pageNumber, Integer pageSize, Integer sortBy) {
-        PageParameters pageParam = new PageParameters(pageNumber, pageSize, sortBy);
-        List<City> page;
-
-        if (StringUtils.hasText(searchText)) {
-            page = cityRepository.getPageFiltered(searchText, pageParam);
-        } else {
-            page = cityRepository.getPage(pageParam);
-        }
-        return page.stream().map(CityDto::new).collect(Collectors.toList());
+        //TODO
+        return getAll();
     }
 
     @Override
     public CityDto add(@NonNull CityDto c) {
-        return cityRepository.add(CityDto.toDomain(c)).map(CityDto::new)
-                .orElseThrow(() -> new ApplicationException("Failed to add city " + c));
+        c.setId(null);
+        return new CityDto(cityRepository.save(CityDto.toDomain(c)));
     }
 
     @Override
     public CityDto update(@NonNull CityDto c) {
-        checkCityExists(c.getId());
-        return cityRepository.update(CityDto.toDomain(c)).map(CityDto::new)
-                .orElseThrow(() -> new ApplicationException("Failed to update city " + c));
+        return cityRepository.findById(c.getId()).map(city -> {
+            city.setName(c.getName());
+            city.setCountryId(c.getCountryId());
+            city.setFoundingDate(c.getFoundingDate());
+            city.setCityDay(c.getCityDay());
+            city.setHasRiver(c.getHasRiver());
+            city.setPopulation(c.getPopulation());
+            return new CityDto(cityRepository.save(city));
+        }).orElseThrow(() -> new ResourceNotFoundException("City with id " + c.getId() + " not found"));
     }
 
     @Override

@@ -5,18 +5,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Data
 @Builder
+@Entity
+@Table(name = "countries")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Country {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String worldRegion;
     private String governmentType;
     private Integer regionsCount;
+
+    @Column(name = "landlocked")
     private Boolean isLandlocked;
     private LocalDate foundingDate;
 }
