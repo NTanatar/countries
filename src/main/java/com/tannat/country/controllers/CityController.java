@@ -39,8 +39,7 @@ public class CityController {
     public CityDto add(
             @PathVariable Long countryId,
             @RequestBody CityDto city) {
-        city.setCountryId(countryId);
-        return cityService.add(city);
+        return cityService.add(countryId, city);
     }
 
     @PutMapping("/{countryId}/cities/{id}")
@@ -48,9 +47,8 @@ public class CityController {
             @PathVariable Long countryId,
             @PathVariable Long id,
             @RequestBody CityDto city) {
-        city.setCountryId(countryId);
         city.setId(id);
-        return cityService.update(city);
+        return cityService.update(countryId, city);
     }
 
     @DeleteMapping("/cities/{id}")

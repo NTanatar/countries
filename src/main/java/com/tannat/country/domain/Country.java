@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
@@ -26,4 +27,7 @@ public class Country {
     @Column(name = "landlocked")
     private Boolean isLandlocked;
     private LocalDate foundingDate;
+
+    @OneToMany(mappedBy = "country")
+    private List<City> cities;
 }

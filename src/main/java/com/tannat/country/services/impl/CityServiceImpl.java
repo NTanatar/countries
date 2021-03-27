@@ -1,15 +1,17 @@
 package com.tannat.country.services.impl;
 
+import com.tannat.country.domain.City;
 import com.tannat.country.dtos.CityDto;
-import com.tannat.country.exceptions.ResourceNotFoundException;
+import com.tannat.country.exceptions.CityNotFoundException;
+import com.tannat.country.exceptions.CountryNotFoundException;
 import com.tannat.country.repositories.JpaCityRepository;
+import com.tannat.country.repositories.JpaCountryRepository;
 import com.tannat.country.services.CityService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,11 +21,12 @@ import java.util.stream.Collectors;
 public class CityServiceImpl implements CityService {
 
     private final JpaCityRepository cityRepository;
+    private final JpaCountryRepository countryRepository;
 
     @Override
     public CityDto getById(@NonNull Long id) {
         return cityRepository.findById(id).map(CityDto::new)
-                .orElseThrow(() -> new ResourceNotFoundException("City with id " + id + " not found"));
+                .orElseThrow(() -> new CityNotFoundException(id));
     }
 
     @Override
@@ -33,7 +36,9 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public List<CityDto> getByCountryId(Long countryId) {
-        return cityRepository.getAllByCountryId(countryId).stream().map(CityDto::new).collect(Collectors.toList());
+        return countryRepository.findById(countryId)
+                .map(country -> country.getCities().stream().map(CityDto::new).collect(Collectors.toList()))
+                .orElseThrow(() -> new CountryNotFoundException(countryId));
     }
 
     @Override
@@ -48,31 +53,32 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public CityDto add(@NonNull CityDto c) {
-        c.setId(null);
-        return new CityDto(cityRepository.save(CityDto.toDomain(c)));
+    public CityDto add(Long countryId, @NonNull CityDto city) {
+        return countryRepository.findById(countryId).map(country -> {
+            City cityToAdd = CityDto.toDomain(city);
+            cityToAdd.setId(null);
+            cityToAdd.setCountry(country);
+            return new CityDto(cityRepository.save(cityToAdd));
+        }).orElseThrow(() -> new CountryNotFoundException(countryId));
     }
 
     @Override
-    public CityDto update(@NonNull CityDto c) {
-        return cityRepository.findById(c.getId()).map(city -> {
-            city.setName(c.getName());
-            city.setCountryId(c.getCountryId());
-            city.setFoundingDate(c.getFoundingDate());
-            city.setCityDay(c.getCityDay());
-            city.setHasRiver(c.getHasRiver());
-            city.setPopulation(c.getPopulation());
-            return new CityDto(cityRepository.save(city));
-        }).orElseThrow(() -> new ResourceNotFoundException("City with id " + c.getId() + " not found"));
+    public CityDto update(Long countryId, @NonNull CityDto city) {
+        return countryRepository.findById(countryId).map(country -> {
+            City cityToUpdate = cityRepository.findById(city.getId())
+                    .orElseThrow(() -> new CityNotFoundException(city.getId()));
+            cityToUpdate.setName(city.getName());
+            cityToUpdate.setFoundingDate(city.getFoundingDate());
+            cityToUpdate.setCityDay(city.getCityDay());
+            cityToUpdate.setHasRiver(city.getHasRiver());
+            cityToUpdate.setPopulation(city.getPopulation());
+            return new CityDto(cityRepository.save(cityToUpdate));
+        }).orElseThrow(() -> new CountryNotFoundException(countryId));
     }
 
     @Override
     public void deleteById(@NonNull Long id) {
-        checkCityExists(id);
+        cityRepository.findById(id).orElseThrow(() -> new CityNotFoundException(id));
         cityRepository.deleteById(id);
-    }
-
-    private void checkCityExists(Long id) {
-        getById(id);
     }
 }
