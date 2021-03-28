@@ -37,11 +37,12 @@ class CountryApplicationTests {
     void testServices() {
         countryService.getAll().forEach(c -> LOGGER.info("-- " + c));
 
-        CountryDto addedCountry = countryService.add(new CountryDto(country, Collections.singletonList(cityA)));
+        country.setCities(Collections.singletonList(cityA));
+        CountryDto addedCountry = countryService.add(new CountryDto(country));
         LOGGER.info("Added country with city A: " + addedCountry);
 
-        cityB.setCountryId(addedCountry.getId());
-        CityDto addedCityB = cityService.add(new CityDto(cityB));
+        CityDto addedCityB = cityService.add(addedCountry.getId(), new CityDto(cityB));
+
         LOGGER.info("Added city B: " + addedCityB);
 
         CountryDto with2cities = countryService.getById(addedCountry.getId());

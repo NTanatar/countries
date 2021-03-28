@@ -23,7 +23,7 @@ public class CountryDto {
     private LocalDate foundingDate;
     private List<CityDto> cities;
 
-    public CountryDto(Country country, List<City> cities) {
+    public CountryDto(Country country) {
         this.id = country.getId();
         this.name = country.getName();
         this.worldRegion = country.getWorldRegion();
@@ -31,13 +31,9 @@ public class CountryDto {
         this.regionsCount = country.getRegionsCount();
         this.isLandlocked = country.getIsLandlocked();
         this.foundingDate = country.getFoundingDate();
-        this.cities = CollectionUtils.isEmpty(cities) ?
+        this.cities = CollectionUtils.isEmpty(country.getCities()) ?
                 Collections.emptyList() :
-                cities.stream().map(CityDto::new).collect(Collectors.toList());
-    }
-
-    public CountryDto(Country country) {
-        this(country, Collections.emptyList());
+                country.getCities().stream().map(CityDto::new).collect(Collectors.toList());
     }
 
     public static Country toDomain(CountryDto dto) {
@@ -49,6 +45,10 @@ public class CountryDto {
         country.setRegionsCount(dto.getRegionsCount());
         country.setIsLandlocked(dto.getIsLandlocked());
         country.setFoundingDate(dto.getFoundingDate());
+        List<City> cities = CollectionUtils.isEmpty(dto.getCities()) ?
+                Collections.emptyList() :
+                dto.getCities().stream().map(CityDto::toDomain).collect(Collectors.toList());
+        country.setCities(cities);
         return country;
     }
 }

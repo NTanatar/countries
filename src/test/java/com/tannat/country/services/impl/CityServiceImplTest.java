@@ -1,9 +1,11 @@
 package com.tannat.country.services.impl;
 
 import com.tannat.country.domain.City;
+import com.tannat.country.domain.Country;
 import com.tannat.country.dtos.CityDto;
 import com.tannat.country.exceptions.ResourceNotFoundException;
-import com.tannat.country.repositories.CityRepository;
+import com.tannat.country.repositories.JpaCityRepository;
+import com.tannat.country.repositories.JpaCountryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,30 +24,36 @@ import static org.mockito.Mockito.*;
 class CityServiceImplTest {
 
     @Mock
-    private CityRepository cityRepository;
+    private JpaCityRepository cityRepository;
+
+    @Mock
+    private JpaCountryRepository countryRepository;
 
     @InjectMocks
     private CityServiceImpl cityService;
 
-    private final City CITY_A = City.builder().id(1L).name("A").population(456).build();
-    private final City CITY_B = City.builder().id(2L).name("B").population(11).build();
-    private final City CREATED = City.builder().id(22L).name("CreatedCity").build();
-    private final City UPDATED = City.builder().id(23L).name("UpdatedCity").build();
+    private final Country COUNTRY = Country.builder().id(40L).name("Finnland").build();
+
+    private final City CITY_A = City.builder().id(1L).country(COUNTRY).name("A").population(456).build();
+    private final City CITY_B = City.builder().id(2L).country(COUNTRY).name("B").population(11).build();
+    private final City CREATED = City.builder().id(22L).country(COUNTRY).name("CreatedCity").build();
+    private final City UPDATED = City.builder().id(23L).country(COUNTRY).name("UpdatedCity").build();
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        COUNTRY.setCities(Arrays.asList(CITY_A, CITY_B));
     }
 
     @Test
     void getById_existing() {
         Long existingId = 1L;
-        when(cityRepository.getById(existingId)).thenReturn(Optional.of(CITY_A));
+        when(cityRepository.findById(existingId)).thenReturn(Optional.of(CITY_A));
 
         CityDto result = cityService.getById(existingId);
 
         assertEquals(new CityDto(CITY_A), result);
-        verify(cityRepository).getById(existingId);
+        verify(cityRepository).findById(existingId);
     }
 
     @Test
@@ -57,98 +64,93 @@ class CityServiceImplTest {
                 () -> cityService.getById(nonExistingId));
 
         assertEquals("City with id " + nonExistingId + " not found", e.getMessage());
-        verify(cityRepository).getById(nonExistingId);
+        verify(cityRepository).findById(nonExistingId);
     }
 
     @Test
     void getAll() {
-        when(cityRepository.getAll()).thenReturn(Arrays.asList(CITY_A, CITY_B));
+        when(cityRepository.findAll()).thenReturn(Arrays.asList(CITY_A, CITY_B));
 
         List<CityDto> result = cityService.getAll();
 
         assertEquals(Arrays.asList(new CityDto(CITY_A), new CityDto(CITY_B)), result);
-        verify(cityRepository).getAll();
+        verify(cityRepository).findAll();
     }
 
     @Test
     void getByCountryId() {
         Long countryId = 8L;
-        when(cityRepository.getByCountryId(countryId)).thenReturn(Arrays.asList(CITY_A, CITY_B));
+        when(countryRepository.findById(countryId)).thenReturn(Optional.of(COUNTRY));
 
         List<CityDto> result = cityService.getByCountryId(countryId);
 
         assertEquals(Arrays.asList(new CityDto(CITY_A), new CityDto(CITY_B)), result);
-        verify(cityRepository).getByCountryId(countryId);
+        verify(countryRepository).findById(countryId);
     }
 
     @Test
     void getPage() {
-        when(cityRepository.getPage(new PageParameters(1, 2, 3)))
-                .thenReturn(Collections.singletonList(CITY_B));
-
-        List<CityDto> result = cityService.getPage(1, 2, 3);
-
-        assertEquals(Collections.singletonList(new CityDto(CITY_B)), result);
-        verify(cityRepository).getPage(new PageParameters(1, 2, 3));
+        //TODO
     }
 
     @Test
     void getPageFiltered() {
-        when(cityRepository.getPageFiltered("A", new PageParameters(0, 2, 3)))
-                .thenReturn(Collections.singletonList(CITY_A));
-
-        List<CityDto> result = cityService.getPageFiltered("A", 0, 2, 3);
-
-        assertEquals(Collections.singletonList(new CityDto(CITY_A)), result);
-        verify(cityRepository).getPageFiltered("A", new PageParameters(0, 2, 3));
+        //TODO
     }
 
     @Test
     void add() {
         City input = City.builder().name("Town").build();
-        when(cityRepository.add(input)).thenReturn(Optional.of(CREATED));
+        City cityToAdd = City.builder().name("Town").country(COUNTRY).build();
+        when(countryRepository.findById(COUNTRY.getId())).thenReturn(Optional.of(COUNTRY));
+        when(cityRepository.save(cityToAdd)).thenReturn(CREATED);
 
-        CityDto result = cityService.add(new CityDto(input));
+        CityDto result = cityService.add(COUNTRY.getId(), new CityDto(input));
 
         assertEquals(new CityDto(CREATED), result);
-        verify(cityRepository).add(input);
+        verify(countryRepository).findById(COUNTRY.getId());
+        verify(cityRepository).save(cityToAdd);
     }
 
     @Test
     void update_existing() {
         Long existingId = 1L;
-        City input = City.builder().name("Dorf").id(existingId).build();
-        when(cityRepository.getById(existingId)).thenReturn(Optional.of(CITY_A));
-        when(cityRepository.update(input)).thenReturn(Optional.of(UPDATED));
+        City input = City.builder().id(existingId).name("Dorf").build();
+        City cityToUpdate = City.builder().id(existingId).name("Dorf").country(COUNTRY).build();
+        when(countryRepository.findById(COUNTRY.getId())).thenReturn(Optional.of(COUNTRY));
+        when(cityRepository.findById(existingId)).thenReturn(Optional.of(CITY_A));
+        when(cityRepository.save(cityToUpdate)).thenReturn(UPDATED);
 
-        CityDto result = cityService.update(new CityDto(input));
+        CityDto result = cityService.update(COUNTRY.getId(), new CityDto(input));
 
         assertEquals(new CityDto(UPDATED), result);
-        verify(cityRepository).getById(existingId);
-        verify(cityRepository).update(input);
+        verify(countryRepository).findById(COUNTRY.getId());
+        verify(cityRepository).findById(existingId);
+        verify(cityRepository).save(cityToUpdate);
     }
 
     @Test
-    void update_nonExisting_ResourceNotFoundException() {
+    void update_nonExistingCity_ResourceNotFoundException() {
         Long nonExistingId = 33L;
         City input = City.builder().name("Dorf").id(nonExistingId).build();
+        when(countryRepository.findById(COUNTRY.getId())).thenReturn(Optional.of(COUNTRY));
 
         ResourceNotFoundException e = assertThrows(ResourceNotFoundException.class,
-                () -> cityService.update(new CityDto(input)));
+                () -> cityService.update(COUNTRY.getId(), new CityDto(input)));
 
         assertEquals("City with id " + nonExistingId + " not found", e.getMessage());
-        verify(cityRepository).getById(nonExistingId);
-        verify(cityRepository, never()).update(input);
+        verify(cityRepository).findById(nonExistingId);
+        verify(cityRepository, never()).save(input);
     }
 
     @Test
     void deleteById_existing() {
         Long existingId = 1L;
-        when(cityRepository.getById(existingId)).thenReturn(Optional.of(CITY_A));
+        when(cityRepository.findById(existingId)).thenReturn(Optional.of(CITY_A));
 
         cityService.deleteById(existingId);
 
-        verify(cityRepository).getById(existingId);
+        verify(cityRepository).findById(existingId);
         verify(cityRepository).deleteById(existingId);
     }
 
@@ -160,7 +162,7 @@ class CityServiceImplTest {
                 () -> cityService.deleteById(nonExistingId));
 
         assertEquals("City with id " + nonExistingId + " not found", e.getMessage());
-        verify(cityRepository).getById(nonExistingId);
+        verify(cityRepository).findById(nonExistingId);
         verify(cityRepository, never()).deleteById(anyLong());
     }
 }

@@ -1,22 +1,30 @@
 package com.tannat.country.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @Builder
+@Entity
+@Table(name = "cities")
+@ToString(exclude = "country")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class City {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long countryId;
     private String name;
     private LocalDate foundingDate;
     private LocalDate cityDay;
     private Boolean hasRiver;
     private Integer population;
+
+    @ManyToOne
+    @JoinColumn(name = "country_id")
+    private Country country;
 }

@@ -16,10 +16,9 @@ public interface CityService {
 
     List<CityDto> getPageFiltered(String searchText, Integer pageNumber, Integer pageSize, Integer sortBy);
 
-    CityDto add(CityDto c);
+    CityDto add(Long countryId, CityDto city);
 
-    CityDto update(CityDto c);
+    CityDto update(Long countryId, CityDto city);
 
     void deleteById(Long id);
-
 }

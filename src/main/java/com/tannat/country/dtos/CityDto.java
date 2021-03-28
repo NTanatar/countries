@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class CityDto {
     private Long id;
-    private Long countryId;
     private String name;
     private LocalDate foundingDate;
     private LocalDate cityDay;
@@ -19,7 +18,6 @@ public class CityDto {
 
     public CityDto(City c) {
         this.id = c.getId();
-        this.countryId = c.getCountryId();
         this.name = c.getName();
         this.foundingDate = c.getFoundingDate();
         this.cityDay = c.getCityDay();
@@ -30,7 +28,6 @@ public class CityDto {
     public static City toDomain(CityDto dto) {
         City c = new City();
         c.setId(dto.getId());
-        c.setCountryId(dto.getCountryId());
         c.setName(dto.getName());
         c.setFoundingDate(dto.getFoundingDate());
         c.setCityDay(dto.getCityDay());
