@@ -4,6 +4,7 @@ package com.tannat.country.controllers;
 import com.tannat.country.dtos.CityDto;
 import com.tannat.country.services.CityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,10 +24,9 @@ public class CityController {
 
     @GetMapping("/cities")
     public List<CityDto> getPage(
-            @RequestParam(required = false) Integer pageNumber,
-            @RequestParam(required = false) Integer pageSize,
-            @RequestParam(required = false) Integer sortBy) {
-        return cityService.getPage(pageNumber, pageSize, sortBy);
+            @RequestParam(required = false) String filter,
+            Pageable pageable) {
+        return cityService.getPageFiltered(pageable, filter);
     }
 
     @GetMapping("/{countryId}/cities")

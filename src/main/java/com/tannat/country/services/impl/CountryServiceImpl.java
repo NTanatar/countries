@@ -10,9 +10,14 @@ import com.tannat.country.repositories.JpaCountryRepository;
 import com.tannat.country.services.CountryService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +43,22 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public List<CountryDto> getPage(Integer pageNumber, Integer pageSize, Integer sortBy) {
-        return getAll(); //TODO
+    public List<CountryDto> getPage(Pageable pageable) {
+        return countryRepository.findAll(pageable)
+                .getContent().stream().map(CountryDto::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CountryDto> getPageFiltered(Pageable pageable, String searchText) {
+        if (!StringUtils.hasText(searchText)) {
+            return getPage(pageable);
+        }
+        Country country = Country.builder().name(searchText).worldRegion(searchText).governmentType(searchText).build();
+        ExampleMatcher matcher = ExampleMatcher.matchingAny()
+                .withIgnoreCase(true)
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Page<Country> page = countryRepository.findAll(Example.of(country, matcher), pageable);
+        return page.getContent().stream().map(CountryDto::new).collect(Collectors.toList());
     }
 
     @Override
