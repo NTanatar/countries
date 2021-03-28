@@ -16,6 +16,7 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.19'
     implementation 'org.flywaydb:flyway-core:6.2.4'
