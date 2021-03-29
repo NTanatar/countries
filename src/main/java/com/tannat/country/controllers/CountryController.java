@@ -3,6 +3,7 @@ package com.tannat.country.controllers;
 import com.tannat.country.dtos.CountryDto;
 import com.tannat.country.services.CountryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +23,9 @@ public class CountryController {
 
     @GetMapping
     public List<CountryDto> getPage(
-            @RequestParam(required = false) Integer pageNumber,
-            @RequestParam(required = false) Integer pageSize,
-            @RequestParam(required = false) Integer sortBy) {
-        return countryService.getPage(pageNumber, pageSize, sortBy);
+            @RequestParam(required = false) String filter,
+            Pageable pageable) {
+        return countryService.getPageFiltered(pageable, filter);
     }
 
     @PostMapping

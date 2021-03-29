@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -102,13 +105,14 @@ class CountryServiceImplTest {
     }
 
     @Test
-    void getPage_noParameters() {
-        //TODO
-    }
+    void getPage() {
+        PageRequest p = PageRequest.of(1, 2, Sort.by("id"));
+        when(countryRepository.findAll(p)).thenReturn(new PageImpl<>(Arrays.asList(COUNTRY_F, COUNTRY_O)));
 
-    @Test
-    void getPage_secondPageSortByName() {
-        //TODO
+        List<CountryDto> result = countryService.getPage(p);
+
+        assertEquals(Arrays.asList(new CountryDto(COUNTRY_F), new CountryDto(COUNTRY_O)), result);
+        verify(countryRepository).findAll(p);
     }
 
     @Test

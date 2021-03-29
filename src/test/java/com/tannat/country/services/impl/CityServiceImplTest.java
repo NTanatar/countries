@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
 import java.util.List;
@@ -90,12 +93,13 @@ class CityServiceImplTest {
 
     @Test
     void getPage() {
-        //TODO
-    }
+        PageRequest p = PageRequest.of(1, 2, Sort.by("id"));
+        when(cityRepository.findAll(p)).thenReturn(new PageImpl<>(Arrays.asList(CITY_A, CITY_B)));
 
-    @Test
-    void getPageFiltered() {
-        //TODO
+        List<CityDto> result = cityService.getPage(p);
+
+        assertEquals(Arrays.asList(new CityDto(CITY_A), new CityDto(CITY_B)), result);
+        verify(cityRepository).findAll(p);
     }
 
     @Test

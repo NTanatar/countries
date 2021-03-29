@@ -1,6 +1,7 @@
 package com.tannat.country.services;
 
 import com.tannat.country.dtos.CityDto;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,9 +13,9 @@ public interface CityService {
 
     List<CityDto> getByCountryId(Long countryId);
 
-    List<CityDto> getPage(Integer pageNumber, Integer pageSize, Integer sortBy);
+    List<CityDto> getPage(Pageable pageable);
 
-    List<CityDto> getPageFiltered(String searchText, Integer pageNumber, Integer pageSize, Integer sortBy);
+    List<CityDto> getPageFiltered(Pageable pageable, String searchText);
 
     CityDto add(Long countryId, CityDto city);
 

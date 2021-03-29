@@ -1,6 +1,7 @@
 package com.tannat.country.services;
 
 import com.tannat.country.dtos.CountryDto;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -10,7 +11,9 @@ public interface CountryService {
 
     List<CountryDto> getAll();
 
-    List<CountryDto> getPage(Integer pageNumber, Integer pageSize, Integer sortBy);
+    List<CountryDto> getPage(Pageable pageable);
+
+    List<CountryDto> getPageFiltered(Pageable pageable, String searchText);
 
     CountryDto add(CountryDto c);
 

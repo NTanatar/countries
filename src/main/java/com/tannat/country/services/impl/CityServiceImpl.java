@@ -9,8 +9,13 @@ import com.tannat.country.repositories.JpaCountryRepository;
 import com.tannat.country.services.CityService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,14 +47,22 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public List<CityDto> getPage(Integer pageNumber, Integer pageSize, Integer sortBy) {
-        return getPageFiltered(null, pageNumber, pageSize, sortBy);
+    public List<CityDto> getPage(Pageable pageable) {
+        return cityRepository.findAll(pageable)
+                .getContent().stream().map(CityDto::new).collect(Collectors.toList());
     }
 
     @Override
-    public List<CityDto> getPageFiltered(String searchText, Integer pageNumber, Integer pageSize, Integer sortBy) {
-        //TODO
-        return getAll();
+    public List<CityDto> getPageFiltered(Pageable pageable, String searchText) {
+        if (!StringUtils.hasText(searchText)) {
+            return getPage(pageable);
+        }
+        City city = City.builder().name(searchText).build();
+        ExampleMatcher matcher = ExampleMatcher.matchingAny()
+                .withIgnoreCase(true)
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Page<City> page = cityRepository.findAll(Example.of(city, matcher), pageable);
+        return page.getContent().stream().map(CityDto::new).collect(Collectors.toList());
     }
 
     @Override
