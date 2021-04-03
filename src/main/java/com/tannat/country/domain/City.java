@@ -11,10 +11,10 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "cities")
 @ToString(exclude = "country")
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class City {
+public class City extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

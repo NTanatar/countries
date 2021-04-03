@@ -1,9 +1,9 @@
 package com.tannat.country.dtos;
 
+import com.tannat.country.domain.AuditableEntity;
 import com.tannat.country.domain.City;
 import com.tannat.country.domain.Country;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
@@ -11,9 +11,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
-public class CountryDto {
+@EqualsAndHashCode(callSuper = false)
+public class CountryDto extends AuditableEntity {
     private Long id;
     private String name;
     private String worldRegion;
@@ -24,6 +27,7 @@ public class CountryDto {
     private List<CityDto> cities;
 
     public CountryDto(Country country) {
+        super(country.getCreated(), country.getModified(), country.getCreatedBy(), country.getModifiedBy());
         this.id = country.getId();
         this.name = country.getName();
         this.worldRegion = country.getWorldRegion();
