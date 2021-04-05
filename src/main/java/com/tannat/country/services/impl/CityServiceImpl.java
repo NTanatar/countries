@@ -90,6 +90,16 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
+    public CityDto patch(Long countryId, CityDto cityPatch) {
+        return countryRepository.findById(countryId).map(country -> {
+            City cityToUpdate = cityRepository.findById(cityPatch.getId())
+                    .orElseThrow(() -> new CityNotFoundException(cityPatch.getId()));
+            CityDto.patch(cityToUpdate, cityPatch);
+            return new CityDto(cityRepository.save(cityToUpdate));
+        }).orElseThrow(() -> new CountryNotFoundException(countryId));
+    }
+
+    @Override
     public void deleteById(@NonNull Long id) {
         cityRepository.findById(id).orElseThrow(() -> new CityNotFoundException(id));
         cityRepository.deleteById(id);

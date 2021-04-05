@@ -39,4 +39,22 @@ public class CityDto extends AuditableEntity {
         c.setPopulation(dto.getPopulation());
         return c;
     }
+
+    public static void patch(City city, CityDto patchDto) {
+        if (patchDto.getName() != null) {
+            city.setName(patchDto.getName());
+        }
+        if (patchDto.getFoundingDate() != null) {
+            city.setFoundingDate(patchDto.getFoundingDate());
+        }
+        if (patchDto.getCityDay() != null) {
+            city.setCityDay(patchDto.getCityDay());
+        }
+        if (patchDto.getHasRiver() != null) {
+            city.setHasRiver(patchDto.getHasRiver());
+        }
+        if (patchDto.getPopulation() != null) {
+            city.setPopulation(patchDto.getPopulation());
+        }
+    }
 }

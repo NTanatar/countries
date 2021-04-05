@@ -21,5 +21,7 @@ public interface CityService {
 
     CityDto update(Long countryId, CityDto city);
 
+    CityDto patch(Long countryId, CityDto cityPatch);
+
     void deleteById(Long id);
 }
