@@ -1,21 +1,21 @@
 package com.tannat.country.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Builder
+@ToString
 @Entity
 @Table(name = "countries")
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Country {
+public class Country extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

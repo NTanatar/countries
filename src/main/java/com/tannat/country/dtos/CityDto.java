@@ -1,14 +1,17 @@
 package com.tannat.country.dtos;
 
+import com.tannat.country.domain.AuditableEntity;
 import com.tannat.country.domain.City;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
-public class CityDto {
+@EqualsAndHashCode(callSuper = false)
+public class CityDto extends AuditableEntity {
     private Long id;
     private String name;
     private LocalDate foundingDate;
@@ -17,6 +20,7 @@ public class CityDto {
     private Integer population;
 
     public CityDto(City c) {
+        super(c.getCreated(), c.getModified(), c.getCreatedBy(), c.getModifiedBy());
         this.id = c.getId();
         this.name = c.getName();
         this.foundingDate = c.getFoundingDate();
