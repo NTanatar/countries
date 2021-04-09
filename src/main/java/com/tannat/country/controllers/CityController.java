@@ -51,6 +51,15 @@ public class CityController {
         return cityService.update(countryId, city);
     }
 
+    @PatchMapping("/{countryId}/cities/{id}")
+    public CityDto patch(
+            @PathVariable Long countryId,
+            @PathVariable Long id,
+            @RequestBody CityDto cityPatch) {
+        cityPatch.setId(id);
+        return cityService.patch(countryId, cityPatch);
+    }
+
     @DeleteMapping("/cities/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) {

@@ -55,4 +55,25 @@ public class CountryDto extends AuditableEntity {
         country.setCities(cities);
         return country;
     }
+
+    public static void patch(Country country, CountryDto patch) {
+        if (patch.getName() != null) {
+            country.setName(patch.getName());
+        }
+        if (patch.getWorldRegion() != null) {
+            country.setWorldRegion(patch.getWorldRegion());
+        }
+        if (patch.getGovernmentType() != null) {
+            country.setGovernmentType(patch.getGovernmentType());
+        }
+        if (patch.getRegionsCount() != null) {
+            country.setRegionsCount(patch.getRegionsCount());
+        }
+        if (patch.getIsLandlocked() != null) {
+            country.setIsLandlocked(patch.getIsLandlocked());
+        }
+        if (patch.getFoundingDate() != null) {
+            country.setFoundingDate(patch.getFoundingDate());
+        }
+    }
 }

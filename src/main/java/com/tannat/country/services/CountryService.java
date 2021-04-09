@@ -19,5 +19,7 @@ public interface CountryService {
 
     CountryDto update(CountryDto c);
 
+    CountryDto patch(CountryDto countryPatch);
+
     void deleteById(Long id);
 }

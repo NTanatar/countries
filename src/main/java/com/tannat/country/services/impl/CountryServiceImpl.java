@@ -10,6 +10,7 @@ import com.tannat.country.repositories.JpaCountryRepository;
 import com.tannat.country.services.CountryService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,6 +88,17 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    public CountryDto patch(CountryDto countryPatch) {
+        return countryRepository.findById(countryPatch.getId()).map(country -> {
+            patchCities(country, countryPatch.getCities());
+            CountryDto.patch(country, countryPatch);
+            Country updated = countryRepository.save(country);
+            return new CountryDto(updated);
+
+        }).orElseThrow(() -> new CountryNotFoundException(countryPatch.getId()));
+    }
+
+    @Override
     public void deleteById(@NonNull Long id) {
         Country country = countryRepository.findById(id).orElseThrow(() -> new CountryNotFoundException(id));
         if (!CollectionUtils.isEmpty(country.getCities())) {
@@ -97,19 +110,37 @@ public class CountryServiceImpl implements CountryService {
     private void replaceCities(Country country, List<CityDto> cities) {
         if (!CollectionUtils.isEmpty(country.getCities())) {
             country.getCities().forEach(city -> cityRepository.deleteById(city.getId()));
+            country.setCities(Collections.emptyList());
         }
         addCities(country, cities);
     }
 
     private void addCities(Country country, List<CityDto> cities) {
-        List<City> added = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(cities)) {
-            cities.stream().map(CityDto::toDomain).forEach(city -> {
-                city.setId(null);
-                city.setCountry(country);
-                added.add(cityRepository.save(city));
-            });
+        if (CollectionUtils.isEmpty(cities)) {
+            return;
         }
-        country.setCities(added);
+        List<City> result = new ArrayList<>(country.getCities());
+        cities.stream().map(CityDto::toDomain).forEach(city -> {
+            city.setId(null);
+            city.setCountry(country);
+            result.add(cityRepository.save(city));
+        });
+        country.setCities(result);
+    }
+
+    private void patchCities(Country country, List<CityDto> cityPatches) {
+        if (CollectionUtils.isEmpty(cityPatches)) {
+            return;
+        }
+        val patches = cityPatches.stream()
+                .collect(Collectors.partitioningBy(patch -> country.hasCity(patch.getId())));
+
+        patches.get(true).forEach(updatePatch -> {
+            country.getCity(updatePatch.getId()).ifPresent(cityToUpdate -> {
+                CityDto.patch(cityToUpdate, updatePatch);
+                cityRepository.save(cityToUpdate);
+            });
+        });
+        addCities(country, patches.get(false));
     }
 }

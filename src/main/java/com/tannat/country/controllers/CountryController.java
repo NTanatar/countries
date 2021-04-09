@@ -41,6 +41,13 @@ public class CountryController {
         return countryService.update(country);
     }
 
+    @PatchMapping("/{id}")
+    public CountryDto patch(@PathVariable Long id,
+                            @RequestBody CountryDto countryPatch) {
+        countryPatch.setId(id);
+        return countryService.patch(countryPatch);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
