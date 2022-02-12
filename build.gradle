@@ -21,6 +21,8 @@ dependencies {
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.19'
     implementation 'org.flywaydb:flyway-core:6.2.4'
 
+    testImplementation group: 'org.jbehave', name: 'jbehave-core', version: '4.8.3'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

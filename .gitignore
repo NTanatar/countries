@@ -38,3 +38,4 @@ out/
 
 
 /lombok.config
+/target/jbehave/
